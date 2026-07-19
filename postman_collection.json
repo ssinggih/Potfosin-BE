@@ -1,0 +1,835 @@
+{
+  "info": {
+    "name": "Potfosin API",
+    "description": "Portfolio Backend API — NestJS Microservices\n\n## Workflow\n1. **Login (owner)** → auto-sets `{{token}}` & `{{user_id}}`\n2. **Create Techs** (React, Node.js, TypeScript) → auto-sets `{{tech_id}}`\n3. **Create Project** → auto-sets `{{project_id}}`\n4. Explore other endpoints\n\nAll variables auto-populate via test scripts.\n\n## Base URL\n{{base_url}}/api/v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "project_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tech_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tech_id_2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tech_id_3",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "image_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "health"]
+            },
+            "description": "Check if the API Gateway is running"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"name\": \"New User\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Register a new user account"
+          }
+        },
+        {
+          "name": "Login (owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.accessToken) {",
+                  "  pm.collectionVariables.set('token', json.data.accessToken);",
+                  "}",
+                  "if (json.data && json.data.user && json.data.user.id) {",
+                  "  pm.collectionVariables.set('user_id', json.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"owner@potfosin.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login as owner (can manage projects/techs). Auto-sets {{token}} and {{user_id}}."
+          }
+        },
+        {
+          "name": "Login (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.accessToken) {",
+                  "  pm.collectionVariables.set('token', json.data.accessToken);",
+                  "}",
+                  "if (json.data && json.data.user && json.data.user.id) {",
+                  "  pm.collectionVariables.set('user_id', json.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@potfosin.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login as admin (full access). Auto-sets {{token}}."
+          }
+        },
+        {
+          "name": "Login (user)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.accessToken) {",
+                  "  pm.collectionVariables.set('token', json.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@potfosin.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login as read-only user. Auto-sets {{token}}."
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "profile"]
+            },
+            "description": "Get currently logged-in user's profile"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Techs",
+      "item": [
+        {
+          "name": "Create Tech — React",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) {",
+                  "  pm.collectionVariables.set('tech_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"React\",\n  \"slug\": \"react\",\n  \"iconUrl\": \"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/techs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "techs"]
+            },
+            "description": "Create React tech tag. Auto-sets {{tech_id}}."
+          }
+        },
+        {
+          "name": "Create Tech — Node.js",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) {",
+                  "  pm.collectionVariables.set('tech_id_2', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Node.js\",\n  \"slug\": \"nodejs\",\n  \"iconUrl\": \"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/techs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "techs"]
+            },
+            "description": "Create Node.js tech tag. Auto-sets {{tech_id_2}}."
+          }
+        },
+        {
+          "name": "Create Tech — TypeScript",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) {",
+                  "  pm.collectionVariables.set('tech_id_3', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TypeScript\",\n  \"slug\": \"typescript\",\n  \"iconUrl\": \"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/techs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "techs"]
+            },
+            "description": "Create TypeScript tech tag. Auto-sets {{tech_id_3}}."
+          }
+        },
+        {
+          "name": "Get All Techs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/techs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "techs"]
+            },
+            "description": "List all tech tags (public)"
+          }
+        },
+        {
+          "name": "Get Tech by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/techs/{{tech_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "techs", "{{tech_id}}"]
+            },
+            "description": "Get a specific tech by ID"
+          }
+        },
+        {
+          "name": "Update Tech",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"React.js\",\n  \"slug\": \"reactjs\",\n  \"iconUrl\": \"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/techs/{{tech_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "techs", "{{tech_id}}"]
+            },
+            "description": "Update a tech tag"
+          }
+        },
+        {
+          "name": "Delete Tech",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/techs/{{tech_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "techs", "{{tech_id}}"]
+            },
+            "description": "Delete a tech tag"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "Create Project — E-Commerce",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) {",
+                  "  pm.collectionVariables.set('project_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"E-Commerce Platform\",\n  \"description\": \"A full-stack e-commerce platform built with React and Node.js. Features include payment gateway integration (Midtrans), real-time order tracking with WebSocket, admin dashboard with analytics, and responsive mobile-first design.\",\n  \"teamType\": \"solo\",\n  \"githubLink\": \"https://github.com/username/ecommerce-platform\",\n  \"designLink\": \"https://figma.com/file/example-ecommerce\",\n  \"status\": \"complete\",\n  \"experience\": \"Built this project to understand full-stack development. Learned about payment gateway integration, WebSocket for real-time updates, Redis caching for performance, and scalable PostgreSQL schema design.\",\n  \"techIds\": [\"{{tech_id}}\", \"{{tech_id_2}}\", \"{{tech_id_3}}\"],\n  \"ownerId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects"]
+            },
+            "description": "Create an e-commerce project with React, Node.js, and TypeScript tech tags. Auto-sets {{project_id}}."
+          }
+        },
+        {
+          "name": "Create Project — Portfolio Website",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id && !pm.collectionVariables.get('project_id')) {",
+                  "  pm.collectionVariables.set('project_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Personal Portfolio\",\n  \"description\": \"Modern portfolio website built with Next.js and Tailwind CSS. Features server-side rendering, dynamic project showcase, blog with MDX support, dark/light theme, and animated page transitions using Framer Motion.\",\n  \"teamType\": \"solo\",\n  \"githubLink\": \"https://github.com/username/portfolio\",\n  \"designLink\": \"https://figma.com/file/example-portfolio\",\n  \"status\": \"complete\",\n  \"experience\": \"This portfolio project taught me about SSR/SSG with Next.js, responsive design patterns, SEO optimization, and performance monitoring with Lighthouse.\",\n  \"techIds\": [\"{{tech_id}}\", \"{{tech_id_3}}\"],\n  \"ownerId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects"]
+            },
+            "description": "Create a portfolio project with React and TypeScript"
+          }
+        },
+        {
+          "name": "Create Project — Mobile App (in progress)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id && !pm.collectionVariables.get('project_id')) {",
+                  "  pm.collectionVariables.set('project_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Fitness Tracker App\",\n  \"description\": \"Cross-platform mobile fitness tracker built with React Native. Features include workout planning, progress tracking with charts, push notifications, social features (friend challenges), and Apple Health/Google Fit integration.\",\n  \"teamType\": \"team\",\n  \"githubLink\": \"https://github.com/username/fitness-tracker\",\n  \"status\": \"progress\",\n  \"experience\": \"Currently working on this with a team of 3. Learning about mobile app architecture, push notification systems, and cross-platform development challenges.\",\n  \"techIds\": [\"{{tech_id}}\", \"{{tech_id_2}}\"],\n  \"ownerId\": \"{{user_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects"]
+            },
+            "description": "Create an in-progress fitness app project with React and Node.js"
+          }
+        },
+        {
+          "name": "Get All Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects"]
+            },
+            "description": "List all projects (public). Returns projects with their associated techs."
+          }
+        },
+        {
+          "name": "Get Projects (filtered by status)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects?status=complete",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects"],
+              "query": [
+                { "key": "status", "value": "complete" }
+              ]
+            },
+            "description": "Filter projects by status: complete, progress, or paused"
+          }
+        },
+        {
+          "name": "Get Projects (paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects?page=1&limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "5" }
+              ]
+            },
+            "description": "Paginated project list"
+          }
+        },
+        {
+          "name": "Get Projects (by tech)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects?techId={{tech_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects"],
+              "query": [
+                { "key": "techId", "value": "{{tech_id}}" }
+              ]
+            },
+            "description": "Filter projects by tech ID (e.g. all React projects)"
+          }
+        },
+        {
+          "name": "Get Project by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects", "{{project_id}}"]
+            },
+            "description": "Get a specific project with full details including associated techs"
+          }
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"E-Commerce Platform v2\",\n  \"description\": \"Updated platform with AI-powered product recommendations and improved checkout flow.\",\n  \"status\": \"progress\",\n  \"experience\": \"Added AI-powered recommendations using collaborative filtering, improved database queries with indexing, and implemented Redis caching layer.\",\n  \"techIds\": [\"{{tech_id}}\", \"{{tech_id_2}}\", \"{{tech_id_3}}\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects", "{{project_id}}"]
+            },
+            "description": "Full update of a project"
+          }
+        },
+        {
+          "name": "Partial Update Project",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"paused\",\n  \"experience\": \"Paused development to focus on other priorities. Will resume when timeline allows.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects", "{{project_id}}"]
+            },
+            "description": "Partial update — only update specific fields"
+          }
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "projects", "{{project_id}}"]
+            },
+            "description": "Delete a project and its associated tech relations"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) {",
+                  "  pm.collectionVariables.set('user_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newowner@example.com\",\n  \"name\": \"New Owner\",\n  \"password\": \"password123\",\n  \"role\": \"owner\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "description": "Create a new user (admin or owner role only)"
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "description": "List all users (requires admin or owner role)"
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "{{user_id}}"]
+            },
+            "description": "Get user by ID"
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"role\": \"owner\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "{{user_id}}"]
+            },
+            "description": "Update user details"
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "{{user_id}}"]
+            },
+            "description": "Delete a user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Uploads",
+      "item": [
+        {
+          "name": "Upload Image (Mockup)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) {",
+                  "  pm.collectionVariables.set('image_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Select an image file (jpeg, png, webp, gif, svg)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/uploads/{{project_id}}/mockup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "uploads", "{{project_id}}", "mockup"]
+            },
+            "description": "Upload a mockup image for a project. Auto-sets {{image_id}}. Supported formats: jpeg, png, webp, gif, svg."
+          }
+        },
+        {
+          "name": "Upload Image (Post)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) {",
+                  "  pm.collectionVariables.set('image_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Select an image file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/uploads/{{project_id}}/post",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "uploads", "{{project_id}}", "post"]
+            },
+            "description": "Upload a post/presentation image for a project"
+          }
+        },
+        {
+          "name": "Get Project Images",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/uploads/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "uploads", "{{project_id}}"]
+            },
+            "description": "Get all images associated with a project"
+          }
+        },
+        {
+          "name": "Delete Image",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/uploads/{{image_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "uploads", "{{image_id}}"]
+            },
+            "description": "Delete an uploaded image"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@potfosin/api-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway for Potfosin microservices",
+  "main": "dist/main",
+  "dependencies": {
+    "@potfosin/common": "*",
+    "@nestjs/microservices": "^10.3.0"
+  }
+}

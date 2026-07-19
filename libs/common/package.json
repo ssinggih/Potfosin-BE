@@ -1,0 +1,7 @@
+{
+  "name": "@potfosin/common",
+  "version": "1.0.0",
+  "description": "Shared library for Potfosin microservices",
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}
