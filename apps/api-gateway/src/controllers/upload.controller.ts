@@ -4,7 +4,6 @@ import {
   Get,
   Delete,
   Param,
-  Inject,
   Logger,
   HttpCode,
   HttpStatus,
@@ -14,8 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes } from '@nestjs/swagger';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { ImagesService } from '../../../portfolio-service/src/images/images.service';
 
 @ApiTags('Uploads')
 @Controller('uploads')
@@ -23,7 +21,7 @@ export class UploadController {
   private readonly logger = new Logger(UploadController.name);
 
   constructor(
-    @Inject('PORTFOLIO_SERVICE') private readonly client: ClientProxy,
+    private readonly imagesService: ImagesService,
   ) {}
 
   @Post(':projectId/:type')
@@ -53,30 +51,26 @@ export class UploadController {
       throw new BadRequestException('Type must be "mockup" or "post"');
     }
 
-    return firstValueFrom(
-      this.client.send('images.upload', {
-        projectId,
-        fileName: file.originalname,
-        fileBuffer: file.buffer.toString('base64'),
-        encoding: 'base64',
-        mimeType: file.mimetype,
-        type,
-      }),
-    );
+    return this.imagesService.upload({
+      projectId,
+      fileName: file.originalname,
+      fileBuffer: file.buffer.toString('base64'),
+      encoding: 'base64',
+      mimeType: file.mimetype,
+      type,
+    });
   }
 
   @Get(':projectId')
   @ApiOperation({ summary: 'Get all images for a project' })
   async findByProject(@Param('projectId') projectId: string) {
-    return firstValueFrom(
-      this.client.send('images.findByProject', { projectId }),
-    );
+    return this.imagesService.findByProject(projectId);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete an image' })
   async remove(@Param('id') id: string) {
-    return firstValueFrom(this.client.send('images.remove', { id }));
+    return this.imagesService.remove(id);
   }
 }

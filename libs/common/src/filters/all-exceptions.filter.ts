@@ -42,7 +42,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     const errObj = exception as any;
-    if (errObj?.message && errObj?.status) {
+    if (!(exception instanceof HttpException) && errObj?.message && errObj?.status) {
       message = errObj.message;
       status = errObj.status;
     }

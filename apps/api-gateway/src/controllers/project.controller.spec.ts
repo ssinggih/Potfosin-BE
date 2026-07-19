@@ -1,61 +1,66 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClientProxy } from '@nestjs/microservices';
-import { of } from 'rxjs';
 import { ProjectController } from './project.controller';
+import { ProjectsService } from '../../../portfolio-service/src/projects/projects.service';
 
 describe('ProjectController (Gateway)', () => {
   let controller: ProjectController;
-  let client: jest.Mocked<ClientProxy>;
+  let projectsService: jest.Mocked<ProjectsService>;
 
-  const mockClient = { send: jest.fn() };
+  const mockProjectsService = {
+    create: jest.fn().mockResolvedValue(undefined),
+    findAll: jest.fn().mockResolvedValue(undefined),
+    findOne: jest.fn().mockResolvedValue(undefined),
+    update: jest.fn().mockResolvedValue(undefined),
+    remove: jest.fn().mockResolvedValue(undefined),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProjectController],
-      providers: [{ provide: 'PORTFOLIO_SERVICE', useValue: mockClient }],
+      providers: [{ provide: ProjectsService, useValue: mockProjectsService }],
     }).compile();
 
     controller = module.get<ProjectController>(ProjectController);
-    client = module.get('PORTFOLIO_SERVICE');
+    projectsService = module.get(ProjectsService);
     jest.clearAllMocks();
   });
 
   it('create', async () => {
-    mockClient.send.mockReturnValue(of({ id: '1', name: 'Project' }));
+    mockProjectsService.create.mockResolvedValue({ id: '1', name: 'Project' });
     const result = await controller.create({ name: 'Project', description: 'Desc', teamType: 'solo' });
-    expect(result.name).toBe('Project');
-    expect(client.send).toHaveBeenCalledWith('projects.create', { name: 'Project', description: 'Desc', teamType: 'solo' });
+    expect(result!.name).toBe('Project');
+    expect(projectsService.create).toHaveBeenCalledWith({ name: 'Project', description: 'Desc', teamType: 'solo' });
   });
 
   it('findAll', async () => {
-    mockClient.send.mockReturnValue(of({ data: [], meta: { page: 1, limit: 10, total: 0, totalPages: 0 } }));
+    mockProjectsService.findAll.mockResolvedValue({ data: [], meta: { page: 1, limit: 10, total: 0, totalPages: 0 } });
     const result = await controller.findAll(1, 10, 'complete', undefined);
-    expect(result.data).toEqual([]);
-    expect(client.send).toHaveBeenCalledWith('projects.findAll', { page: 1, limit: 10, status: 'complete', techId: undefined });
+    expect(result!.data).toEqual([]);
+    expect(projectsService.findAll).toHaveBeenCalledWith({ page: 1, limit: 10, status: 'complete', techId: undefined });
   });
 
   it('findOne', async () => {
-    mockClient.send.mockReturnValue(of({ id: '1' }));
+    mockProjectsService.findOne.mockResolvedValue({ id: '1' });
     const result = await controller.findOne('1');
-    expect(result.id).toBe('1');
+    expect(result!.id).toBe('1');
   });
 
   it('update', async () => {
-    mockClient.send.mockReturnValue(of({ id: '1', name: 'Updated' }));
+    mockProjectsService.update.mockResolvedValue({ id: '1', name: 'Updated' });
     const result = await controller.update('1', { name: 'Updated' });
-    expect(result.name).toBe('Updated');
+    expect(result!.name).toBe('Updated');
   });
 
   it('partialUpdate', async () => {
-    mockClient.send.mockReturnValue(of({ id: '1', status: 'complete' }));
+    mockProjectsService.update.mockResolvedValue({ id: '1', status: 'complete' });
     const result = await controller.partialUpdate('1', { status: 'complete' });
-    expect(result.status).toBe('complete');
+    expect(result!.status).toBe('complete');
   });
 
   it('remove', async () => {
-    mockClient.send.mockReturnValue(of(undefined));
+    mockProjectsService.remove.mockResolvedValue(undefined);
     const result = await controller.remove('1');
     expect(result).toBeUndefined();
-    expect(client.send).toHaveBeenCalledWith('projects.remove', { id: '1' });
+    expect(projectsService.remove).toHaveBeenCalledWith('1');
   });
 });

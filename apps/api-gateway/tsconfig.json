@@ -5,5 +5,11 @@
     "rootDir": "../../",
     "declaration": false
   },
-  "include": ["src/**/*", "../../libs/common/src/**/*", "../../libs/database/src/**/*"]
+  "include": [
+    "src/**/*",
+    "../../libs/common/src/**/*",
+    "../../libs/database/src/**/*",
+    "../../apps/portfolio-service/src/**/*"
+  ],
+  "exclude": ["**/*.spec.ts", "**/test/**"]
 }

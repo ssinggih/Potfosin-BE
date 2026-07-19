@@ -1,34 +1,37 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClientProxy } from '@nestjs/microservices';
 import { BadRequestException } from '@nestjs/common';
-import { of } from 'rxjs';
 import { UploadController } from './upload.controller';
+import { ImagesService } from '../../../portfolio-service/src/images/images.service';
 
 describe('UploadController (Gateway)', () => {
   let controller: UploadController;
-  let client: jest.Mocked<ClientProxy>;
+  let imagesService: jest.Mocked<ImagesService>;
 
-  const mockClient = { send: jest.fn() };
+  const mockImagesService = {
+    upload: jest.fn(),
+    findByProject: jest.fn(),
+    remove: jest.fn(),
+  } as any;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UploadController],
-      providers: [{ provide: 'PORTFOLIO_SERVICE', useValue: mockClient }],
+      providers: [{ provide: ImagesService, useValue: mockImagesService }],
     }).compile();
 
     controller = module.get<UploadController>(UploadController);
-    client = module.get('PORTFOLIO_SERVICE');
+    imagesService = module.get(ImagesService);
     jest.clearAllMocks();
   });
 
-  it('upload should send image to microservice', async () => {
-    mockClient.send.mockReturnValue(of({ id: '1', url: 'https://cdn.example.com/img.png', type: 'mockup' }));
+  it('upload should send image to service', async () => {
+    mockImagesService.upload.mockResolvedValue({ id: '1', url: 'https://cdn.example.com/img.png', type: 'mockup' });
     const file = { originalname: 'test.png', buffer: Buffer.from('x'), mimetype: 'image/png' };
 
     const result = await controller.upload('proj-1', 'mockup', file);
 
     expect(result.url).toContain('example.com');
-    expect(client.send).toHaveBeenCalledWith('images.upload', {
+    expect(imagesService.upload).toHaveBeenCalledWith({
       projectId: 'proj-1', fileName: 'test.png', fileBuffer: Buffer.from('x').toString('base64'), encoding: 'base64', mimeType: 'image/png', type: 'mockup',
     });
   });
@@ -44,13 +47,13 @@ describe('UploadController (Gateway)', () => {
   });
 
   it('findByProject', async () => {
-    mockClient.send.mockReturnValue(of({ data: [] }));
+    mockImagesService.findByProject.mockResolvedValue({ data: [] });
     const result = await controller.findByProject('proj-1');
     expect(result.data).toEqual([]);
   });
 
   it('remove', async () => {
-    mockClient.send.mockReturnValue(of(undefined));
+    mockImagesService.remove.mockResolvedValue(undefined);
     const result = await controller.remove('1');
     expect(result).toBeUndefined();
   });

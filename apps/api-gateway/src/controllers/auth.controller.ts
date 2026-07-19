@@ -3,17 +3,15 @@ import {
   Get,
   Post,
   Body,
-  Inject,
   Logger,
   HttpCode,
   HttpStatus,
   Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import { SkipAuth } from '../middleware/auth.middleware';
 import { Request } from 'express';
+import { AuthService } from '../../../portfolio-service/src/auth/auth.service';
 
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
@@ -44,7 +42,7 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
   constructor(
-    @Inject('PORTFOLIO_SERVICE') private readonly client: ClientProxy,
+    private readonly authService: AuthService,
   ) {}
 
   @Post('register')
@@ -52,7 +50,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Register a new user' })
   async register(@Body() dto: RegisterDto) {
-    return firstValueFrom(this.client.send('auth.register', dto));
+    return this.authService.register(dto);
   }
 
   @Post('login')
@@ -60,7 +58,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login user' })
   async login(@Body() dto: LoginDto) {
-    return firstValueFrom(this.client.send('auth.login', dto));
+    return this.authService.login(dto);
   }
 
   @Get('profile')
@@ -68,6 +66,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Get current user profile' })
   async getProfile(@Req() req: Request) {
     const userId = (req as any).user?.sub;
-    return firstValueFrom(this.client.send('auth.profile', { userId }));
+    return this.authService.getProfile(userId);
   }
 }

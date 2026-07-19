@@ -2,6 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { JwtModule } from '@nestjs/jwt';
+import { DatabaseModule } from '@database/database.module';
 import { AppController } from './app.controller';
 import { AuthController } from './controllers/auth.controller';
 import { ProjectController } from './controllers/project.controller';
@@ -11,7 +12,12 @@ import { UploadController } from './controllers/upload.controller';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { CorrelationIdMiddleware } from '@common/middleware/correlation-id.middleware';
-import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { AuthService } from '../../portfolio-service/src/auth/auth.service';
+import { ProjectsService } from '../../portfolio-service/src/projects/projects.service';
+import { TechsService } from '../../portfolio-service/src/techs/techs.service';
+import { UsersService } from '../../portfolio-service/src/users/users.service';
+import { ImagesService } from '../../portfolio-service/src/images/images.service';
+import { R2Service } from '../../portfolio-service/src/uploads/r2.service';
 
 @Module({
   imports: [
@@ -34,6 +40,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       inject: [ConfigService],
       global: true,
     }),
+    DatabaseModule,
   ],
   controllers: [
     AppController,
@@ -44,18 +51,12 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
     UploadController,
   ],
   providers: [
-    {
-      provide: 'PORTFOLIO_SERVICE',
-      useFactory: (configService: ConfigService) =>
-        ClientProxyFactory.create({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('PORTFOLIO_SERVICE_HOST', 'localhost'),
-            port: Number(configService.get('PORTFOLIO_SERVICE_TCP_PORT', 4001)),
-          },
-        }),
-      inject: [ConfigService],
-    },
+    AuthService,
+    ProjectsService,
+    TechsService,
+    UsersService,
+    ImagesService,
+    R2Service,
   ],
 })
 export class AppModule implements NestModule {
