@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
-import * as compression from 'compression';
+import compression from 'compression';
 import { AppModule } from '../apps/api-gateway/src/app.module';
 import { AllExceptionsFilter } from '../libs/common/src/filters/all-exceptions.filter';
 import { TransformInterceptor } from '../libs/common/src/interceptors/transform.interceptor';
@@ -11,7 +11,7 @@ import { LoggingInterceptor } from '../libs/common/src/interceptors/logging.inte
 import { TimeoutInterceptor } from '../libs/common/src/interceptors/timeout.interceptor';
 import serverlessExpress from '@vendia/serverless-express';
 
-let cachedServer;
+let cachedServer: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
