@@ -57,18 +57,17 @@ vercel --prod
 1. Push repo ke GitHub
 2. Vercel Dashboard → Add New Project → Import repo
 3. Framework: **Other**
-4. Build Command: `npm run vercel-build`
-5. Output: `dist`
+4. Build Command: **kosongkan** (biarkan default — `vercel.json` di repo sudah ada `buildCommand`)
+5. Output Directory: **kosongkan** (sama, `vercel.json` sudah ada `outputDirectory`)
 6. Set environment variables (tabel di atas)
 7. Deploy
 
 ## 4. File Penting untuk Vercel
 
-| File                | Fungsi                                                               |
-| ------------------- | -------------------------------------------------------------------- |
-| `api/index.ts`      | Serverless handler — bootstrap NestJS + `@vendia/serverless-express` |
-| `vercel.json`       | Build command & routing                                              |
-| `tsconfig.api.json` | TypeScript config khusus Vercel                                      |
+| File           | Fungsi                                                               |
+| -------------- | -------------------------------------------------------------------- |
+| `api/index.ts` | Serverless handler — bootstrap NestJS + `@vendia/serverless-express` |
+| `vercel.json`  | Routing — semua request `/*` → `api/index.ts`                        |
 
 ## 5. Arsitektur
 
