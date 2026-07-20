@@ -19,7 +19,7 @@
     "start:prod:gateway": "node apps/api-gateway/dist/apps/api-gateway/src/main",
     "start:gateway": "nest start api-gateway --watch",
     "start:portfolio": "nest start portfolio-service --watch",
-    "vercel-build": "nest build api-gateway",
+
     "migrate": "npx ts-node -P tsconfig.json scripts/migrate.ts",
     "seed": "npx ts-node -P tsconfig.json scripts/seed.ts",
     "lint": "eslint \"{apps,libs}/**/*.ts\" --fix",
