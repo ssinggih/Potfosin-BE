@@ -14,8 +14,8 @@ export class ProjectsService {
 
   async create(dto: CreateProjectDto) {
     const result = await this.db.query(
-      `INSERT INTO projects (name, description, team_type, github_link, design_link, status, experience, owner_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO projects (name, description, team_type, github_link, design_link, status, experience, start_date, end_date, priority, owner_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
       [
         dto.name,
@@ -25,6 +25,9 @@ export class ProjectsService {
         dto.designLink || null,
         dto.status || 'progress',
         dto.experience || null,
+        dto.startDate || null,
+        dto.endDate || null,
+        dto.priority ?? 50,
         dto.ownerId || null,
       ],
     );
@@ -75,7 +78,7 @@ export class ProjectsService {
 
     const result = await this.db.query(
       `SELECT * FROM projects p${whereClause}
-       ORDER BY p.created_at DESC
+       ORDER BY p.priority DESC, p.created_at DESC
        LIMIT $${paramIndex++} OFFSET $${paramIndex}`,
       params,
     );
@@ -116,6 +119,9 @@ export class ProjectsService {
       designLink: 'design_link',
       status: 'status',
       experience: 'experience',
+      startDate: 'start_date',
+      endDate: 'end_date',
+      priority: 'priority',
     };
 
     for (const [key, col] of Object.entries(fieldMap)) {
@@ -205,6 +211,9 @@ export class ProjectsService {
       designLink: project.design_link,
       status: project.status,
       experience: project.experience,
+      startDate: project.start_date,
+      endDate: project.end_date,
+      priority: project.priority,
       owner,
       techs: techsResult.rows,
       images: imagesResult.rows,

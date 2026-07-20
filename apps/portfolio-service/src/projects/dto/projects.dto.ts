@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsArray, IsUUID, MinLength } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsArray, IsUUID, MinLength, IsInt, Min, Max, IsDateString } from 'class-validator';
 
 export enum TeamType {
   SOLO = 'solo',
@@ -39,6 +39,20 @@ export class CreateProjectDto {
   experience?: string;
 
   @IsOptional()
+  @IsDateString()
+  startDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  endDate?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  priority?: number;
+
+  @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
   techIds?: string[];
@@ -77,6 +91,20 @@ export class UpdateProjectDto {
   @IsOptional()
   @IsString()
   experience?: string;
+
+  @IsOptional()
+  @IsDateString()
+  startDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  endDate?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  priority?: number;
 
   @IsOptional()
   @IsArray()
