@@ -1,34 +1,75 @@
-# Potfosin — Portfolio Backend
+# Potfosin Backend
 
-NestJS monorepo microservices backend with **PostgreSQL + Cloudflare R2**.
+Potfosin Backend adalah backend untuk aplikasi portfolio berbasis NestJS dengan arsitektur monorepo dan microservice. Aplikasi ini menangani autentikasi, manajemen project, teknologi, upload gambar, serta integrasi penyimpanan file ke Cloudflare R2.
 
-## Architecture
+## Tech Stack
 
+- Node.js + TypeScript
+- NestJS untuk arsitektur server-side modular dan scalable
+- Monorepo workspace dengan dua aplikasi utama:
+  - API Gateway: menangani request HTTP dari client
+  - Portfolio Service: menangani logika bisnis dan akses data
+- PostgreSQL sebagai database relasional
+- Redis untuk caching
+- Cloudflare R2 untuk penyimpanan file/image
+- JWT + Passport untuk autentikasi
+- Swagger untuk dokumentasi API
+- Jest + ts-jest untuk testing
+- Docker Compose untuk environment lokal
+
+## Arsitektur
+
+```text
+Client ──► API Gateway ──► Portfolio Service
+      │                │
+      │                ├── PostgreSQL
+      │                ├── Redis
+      │                └── Cloudflare R2
+      │
+      └── Auth / JWT / Middleware
 ```
-Gateway (HTTP :3000) ──TCP──► Portfolio Service (TCP :4001)
-        │                              │
-        ▼                              ▼
-     Redis (cache)              PostgreSQL (DB)
-                                     │
-                                     ▼
-                              Cloudflare R2 (files)
-```
 
-Two separate NestJS apps: **API Gateway** handles HTTP, **Portfolio Service** handles business logic. Communication via TCP.
+Aplikasi terbagi menjadi dua service terpisah agar lebih modular dan mudah dikembangkan secara mandiri.
 
-## Install
+## Struktur Proyek
+
+- apps/api-gateway: entry point HTTP, routing, middleware, controller
+- apps/portfolio-service: service bisnis, module project, tech, user, image
+- libs/common: shared utilities, guards, decorators, interfaces
+- libs/database: integrasi dan helper database
+- migrations: file migrasi SQL untuk skema database
+- scripts: migrasi dan seeding data
+
+## Prerequisites
+
+Pastikan sistem sudah memiliki:
+
+- Node.js 20+
+- npm atau pnpm
+- PostgreSQL
+- Redis
+- Akun Cloudflare R2 untuk storage object
+
+## Instalasi
 
 ```bash
-git clone <repo-url> potfosin-be && cd potfosin-be
+git clone <repo-url> potfosin-be
+cd potfosin-be
 npm install
-cp .env.example .env          # Edit with your DB & R2 credentials
-npm run migrate                 # Create tables
-npm run seed                    # Seed 3 default users
 ```
 
-## Run
+Buat file environment `.env` dan isi konfigurasi database, Redis, JWT, serta Cloudflare R2.
 
-### Development (watch mode)
+## Migrasi & Seed Data
+
+```bash
+npm run migrate
+npm run seed
+```
+
+## Menjalankan Aplikasi
+
+### Development
 
 ```bash
 # Terminal 1 — Gateway
@@ -48,10 +89,16 @@ npm run start:prod
 npm run start:prod:portfolio
 ```
 
-### Verify
+## Testing
 
 ```bash
-curl http://localhost:3000/api/v1/health
+npm test
 ```
 
-Default users: `admin@potfosin.com`, `owner@potfosin.com`, `user@potfosin.com` — all with password `password123`.
+## Default User
+
+Akun default yang tersedia setelah seeding:
+
+- admin@potfosin.com / password123
+- owner@potfosin.com / password123
+- user@potfosin.com / password123

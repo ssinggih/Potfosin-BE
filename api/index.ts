@@ -1,14 +1,14 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import helmet from 'helmet';
-import compression from 'compression';
-import { AppModule } from '../apps/api-gateway/dist/apps/api-gateway/src/app.module';
-import { AllExceptionsFilter } from '../apps/api-gateway/dist/libs/common/src/filters/all-exceptions.filter';
-import { TransformInterceptor } from '../apps/api-gateway/dist/libs/common/src/interceptors/transform.interceptor';
-import { LoggingInterceptor } from '../apps/api-gateway/dist/libs/common/src/interceptors/logging.interceptor';
-import { TimeoutInterceptor } from '../apps/api-gateway/dist/libs/common/src/interceptors/timeout.interceptor';
-import type { Express } from 'express';
+import { NestFactory } from "@nestjs/core";
+import { ValidationPipe, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import helmet from "helmet";
+import compression from "compression";
+import { AppModule } from "../apps/api-gateway/dist/apps/api-gateway/src/app.module";
+import { AllExceptionsFilter } from "../apps/api-gateway/dist/libs/common/src/filters/all-exceptions.filter";
+import { TransformInterceptor } from "../apps/api-gateway/dist/libs/common/src/interceptors/transform.interceptor";
+import { LoggingInterceptor } from "../apps/api-gateway/dist/libs/common/src/interceptors/logging.interceptor";
+import { TimeoutInterceptor } from "../apps/api-gateway/dist/libs/common/src/interceptors/timeout.interceptor";
+import type { Express } from "express";
 
 const API_DOCS_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -422,16 +422,24 @@ let cachedApp: Express;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const logger = new Logger('Bootstrap');
+  const logger = new Logger("Bootstrap");
 
-  app.setGlobalPrefix(configService.get('GATEWAY_PREFIX', 'api/v1'));
+  app.setGlobalPrefix(configService.get("GATEWAY_PREFIX", "api/v1"));
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          imgSrc: ["'self'", "data:", "https://*.r2.dev"],
+        },
+      },
+    }),
+  );
   app.use(compression());
 
   app.enableCors({
-    origin: configService.get('CORS_ORIGIN', '*'),
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: configService.get("CORS_ORIGIN", "*"),
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   });
 
@@ -459,8 +467,8 @@ export default async function handler(req: any, res: any) {
   if (!cachedApp) {
     await bootstrap();
   }
-  if (req.url === '/' || req.url === '') {
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  if (req.url === "/" || req.url === "") {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
     return res.end(API_DOCS_HTML);
   }
   cachedApp(req, res);
