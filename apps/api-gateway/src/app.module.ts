@@ -12,6 +12,7 @@ import { UploadController } from './controllers/upload.controller';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { CorrelationIdMiddleware } from '@common/middleware/correlation-id.middleware';
+import { HttpCacheMiddleware } from '@common/middleware/http-cache.middleware';
 import { AuthService } from '../../portfolio-service/src/auth/auth.service';
 import { ProjectsService } from '../../portfolio-service/src/projects/projects.service';
 import { TechsService } from '../../portfolio-service/src/techs/techs.service';
@@ -51,6 +52,7 @@ import { R2Service } from '../../portfolio-service/src/uploads/r2.service';
     UploadController,
   ],
   providers: [
+    HttpCacheMiddleware,
     AuthService,
     ProjectsService,
     TechsService,

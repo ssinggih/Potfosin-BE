@@ -8,6 +8,8 @@ import { AllExceptionsFilter } from "@common/filters/all-exceptions.filter";
 import { TransformInterceptor } from "@common/interceptors/transform.interceptor";
 import { LoggingInterceptor } from "@common/interceptors/logging.interceptor";
 import { TimeoutInterceptor } from "@common/interceptors/timeout.interceptor";
+import { ETagInterceptor } from "@common/interceptors/etag.interceptor";
+import { HttpCacheMiddleware } from "@common/middleware/http-cache.middleware";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,6 +34,9 @@ async function bootstrap() {
   );
   app.use(compression());
 
+  const httpCacheMiddleware = app.get(HttpCacheMiddleware);
+  app.use(httpCacheMiddleware.use.bind(httpCacheMiddleware));
+
   app.enableCors({
     origin: configService.get("CORS_ORIGIN", "*"),
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -50,6 +55,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new LoggingInterceptor(),
     new TransformInterceptor(),
+    new ETagInterceptor(app.get('Reflector')),
     new TimeoutInterceptor(30000),
   );
 

@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SkipAuth } from '../middleware/auth.middleware';
+import { CachePolicy } from '@common/decorators/cache-policy.decorator';
 import { ProjectsService } from '../../../portfolio-service/src/projects/projects.service';
 
 @ApiTags('Projects')
@@ -35,6 +36,7 @@ export class ProjectController {
 
   @Get()
   @SkipAuth()
+  @CachePolicy({ maxAge: 2, scope: 'public' })
   @ApiOperation({ summary: 'Get all projects (public)' })
   async findAll(
     @Query('page') page?: number,
@@ -47,6 +49,7 @@ export class ProjectController {
 
   @Get(':id')
   @SkipAuth()
+  @CachePolicy({ maxAge: 5, scope: 'public' })
   @ApiOperation({ summary: 'Get project by ID' })
   async findOne(@Param('id') id: string) {
     return this.projectsService.findOne(id);

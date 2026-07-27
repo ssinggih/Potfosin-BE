@@ -8,10 +8,14 @@ export * from './interceptors/timeout.interceptor';
 export * from './interceptors/logging.interceptor';
 
 export * from './middleware/correlation-id.middleware';
+export * from './middleware/http-cache.middleware';
 
 export * from './decorators/public.decorator';
 export * from './decorators/current-user.decorator';
 export * from './decorators/roles.decorator';
+export * from './decorators/cache-policy.decorator';
+
+export * from './interceptors/etag.interceptor';
 
 export * from './utils/error-codes';
 export * from './utils/helpers';

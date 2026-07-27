@@ -12,6 +12,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { CachePolicy } from '@common/decorators/cache-policy.decorator';
 import { UsersService } from '../../../portfolio-service/src/users/users.service';
 
 @ApiTags('Users')
@@ -31,12 +32,14 @@ export class UserController {
   }
 
   @Get()
+  @CachePolicy({ maxAge: 0 })
   @ApiOperation({ summary: 'Get all users (admin only)' })
   async findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
     return this.usersService.findAll(page, limit);
   }
 
   @Get(':id')
+  @CachePolicy({ maxAge: 0 })
   @ApiOperation({ summary: 'Get user by ID' })
   async findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);

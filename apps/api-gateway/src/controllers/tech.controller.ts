@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SkipAuth } from '../middleware/auth.middleware';
+import { CachePolicy } from '@common/decorators/cache-policy.decorator';
 import { TechsService } from '../../../portfolio-service/src/techs/techs.service';
 
 @ApiTags('Techs')
@@ -32,6 +33,7 @@ export class TechController {
 
   @Get()
   @SkipAuth()
+  @CachePolicy({ maxAge: 10, scope: 'public' })
   @ApiOperation({ summary: 'Get all techs (public)' })
   async findAll() {
     return this.techsService.findAll();
@@ -39,6 +41,7 @@ export class TechController {
 
   @Get(':id')
   @SkipAuth()
+  @CachePolicy({ maxAge: 10, scope: 'public' })
   @ApiOperation({ summary: 'Get tech by ID' })
   async findOne(@Param('id') id: string) {
     return this.techsService.findOne(id);
