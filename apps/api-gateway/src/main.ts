@@ -41,6 +41,7 @@ async function bootstrap() {
     origin: configService.get("CORS_ORIGIN", "*"),
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
+    exposedHeaders: ["ETag", "Cache-Control", "Last-Modified"],
   });
 
   app.useGlobalPipes(
