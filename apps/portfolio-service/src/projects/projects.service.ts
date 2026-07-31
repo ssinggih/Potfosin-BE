@@ -14,8 +14,8 @@ export class ProjectsService {
 
   async create(dto: CreateProjectDto) {
     const result = await this.db.query(
-      `INSERT INTO projects (name, description, team_type, github_link, design_link, status, experience, start_date, end_date, priority, owner_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO projects (name, description, team_type, github_link, design_link, status, experience, demo_url, key_features, role, results, challenges, start_date, end_date, priority, owner_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
        RETURNING *`,
       [
         dto.name,
@@ -25,6 +25,11 @@ export class ProjectsService {
         dto.designLink || null,
         dto.status || 'progress',
         dto.experience || null,
+        dto.demoUrl || null,
+        dto.keyFeatures || null,
+        dto.role || null,
+        dto.results || null,
+        dto.challenges || null,
         dto.startDate || null,
         dto.endDate || null,
         dto.priority ?? 50,
@@ -119,6 +124,11 @@ export class ProjectsService {
       designLink: 'design_link',
       status: 'status',
       experience: 'experience',
+      demoUrl: 'demo_url',
+      keyFeatures: 'key_features',
+      role: 'role',
+      results: 'results',
+      challenges: 'challenges',
       startDate: 'start_date',
       endDate: 'end_date',
       priority: 'priority',
@@ -211,6 +221,11 @@ export class ProjectsService {
       designLink: project.design_link,
       status: project.status,
       experience: project.experience,
+      demoUrl: project.demo_url,
+      keyFeatures: project.key_features,
+      role: project.role,
+      results: project.results,
+      challenges: project.challenges,
       startDate: project.start_date,
       endDate: project.end_date,
       priority: project.priority,

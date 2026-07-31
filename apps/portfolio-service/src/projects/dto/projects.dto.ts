@@ -39,6 +39,27 @@ export class CreateProjectDto {
   experience?: string;
 
   @IsOptional()
+  @IsString()
+  demoUrl?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  keyFeatures?: string[];
+
+  @IsOptional()
+  @IsString()
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  results?: string;
+
+  @IsOptional()
+  @IsString()
+  challenges?: string;
+
+  @IsOptional()
   @IsDateString()
   startDate?: string;
 
@@ -91,6 +112,27 @@ export class UpdateProjectDto {
   @IsOptional()
   @IsString()
   experience?: string;
+
+  @IsOptional()
+  @IsString()
+  demoUrl?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  keyFeatures?: string[];
+
+  @IsOptional()
+  @IsString()
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  results?: string;
+
+  @IsOptional()
+  @IsString()
+  challenges?: string;
 
   @IsOptional()
   @IsDateString()
